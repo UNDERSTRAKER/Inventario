@@ -10,15 +10,19 @@ let maxCustomerOrder = 20;
 let unitNotDeliveredCost = 2;
 
 let minInventoryLevel = 10;
-let fixedOrderQuantity = 15;
+let fixedOrderQuantity = 15; //variable para cambiar la cantidad fija de productos de la estrategia 1
 
-let days = 2000;
+let days = 2000; //cantidad de dias que se hara la simulacion
 
 // Iniciar con el inventario lleno
 let currentInventory = maxCapacity;
 let totalCost = 0;
 let pendingOrders = [];
 let dailyCosts = [];
+
+//Almacenar el valor de los gastos de cada estrtaegia para la conclusion
+let totalCostStrategy1 = 0;
+let totalCostStrategy2 = 0;
 
 // Función para simular el día a día del inventario
 function simulateDay(day) {
@@ -87,7 +91,7 @@ function simulateStrategy(strategy) {
     let currentDailyCosts = [...dailyCosts];
 
     btn.addEventListener('click', function () {
-        if (detailsContainer.style.display === 'none' || detailsContainer.style.display === '')  {
+        if (detailsContainer.style.display === 'none' || detailsContainer.style.display === '') {
             // Mostrar los detalles
             detailsContainer.innerHTML = currentDailyCosts.map(cost => `<p>Día ${cost.day}: Costo acumulado $${cost.totalCost}, Inventario: ${cost.currentInventory}</p>`).join('');
             detailsContainer.style.display = 'block';
@@ -97,7 +101,29 @@ function simulateStrategy(strategy) {
             detailsContainer.style.display = 'none';
         }
     });
+
+    if (strategy === 1) {
+        totalCostStrategy1 = totalCost;
+    } else {
+        totalCostStrategy2 = totalCost;
+    }
+}
+
+function conclusionStrategies() {
+    const conclusionContainer = document.getElementById('conclusion');
+    let conclusionHtml = '';
+
+    if (totalCostStrategy1 < totalCostStrategy2) {
+        conclusionHtml = `<p>La Estrategia 1 es más eficiente con un costo total de $${totalCostStrategy1} comparado con $${totalCostStrategy2} de la Estrategia 2.</p> <p>Si desea comparar ambas estrategias dia a dia porfavor revisar los detalles de cada estrategia</p>`;
+    } else if (totalCostStrategy2 < totalCostStrategy1) {
+        conclusionHtml = `<p>La Estrategia 2 es más eficiente con un costo total de $${totalCostStrategy2} comparado con $${totalCostStrategy1} de la Estrategia 1.</p> <p>Si desea comparar ambas estrategias dia a dia porfavor revisar los detalles de cada estrategia</p>`;
+    } else {
+        conclusionHtml = `<p>Ambas estrategias son igualmente eficientes con un costo total de $${totalCostStrategy1}.</p> <p>Si desea comparar ambas estrategias dia a dia porfavor revisar los detalles de cada estrategia</p>`;
+    }
+
+    conclusionContainer.innerHTML = conclusionHtml;
 }
 // Simulando ambas estrategias
 simulateStrategy(1);
 simulateStrategy(2);
+conclusionStrategies();
